@@ -6,9 +6,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,11 +34,20 @@ public class GlobalExceptionHandler {
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
-    @ExceptionHandler(org.springframework.web.HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Map<String, List<String>>> handleMediaTypeNotSupported(org.springframework.web.HttpMediaTypeNotSupportedException ex) throws IOException {
+    //    Default for all RuntimeException
+    @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
+    public ResponseEntity<Map<String, List<String>>> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex){
         Map<String, List<String>> map = new HashMap<>();
         map.put("errors", Arrays.asList(ex.getMessage()));
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+//    workaround for 403 response
+    @ExceptionHandler({ResponseStatusException.class})
+    public ResponseEntity<Map<String, List<String>>> handleResponseStatusException(ResponseStatusException ex){
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("errors", Arrays.asList(ex.getReason()));
+        return new ResponseEntity<>(map, HttpStatus.valueOf(ex.getStatusCode().value()));
     }
 
 

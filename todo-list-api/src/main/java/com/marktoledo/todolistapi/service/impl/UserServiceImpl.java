@@ -2,15 +2,14 @@ package com.marktoledo.todolistapi.service.impl;
 
 import com.marktoledo.todolistapi.domain.User;
 import com.marktoledo.todolistapi.dto.request.SignUpRequest;
-import com.marktoledo.todolistapi.dto.response.AuthenticationResponse;
 import com.marktoledo.todolistapi.dto.response.SignUpResponse;
-import com.marktoledo.todolistapi.exception.PasswordDidNotMatchException;
-import com.marktoledo.todolistapi.exception.UsernameAlreadyExistException;
 import com.marktoledo.todolistapi.repository.UserRepository;
 import com.marktoledo.todolistapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
 //      validate if password match
         if(!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())){
-            throw new PasswordDidNotMatchException("Password did not match");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password did not match");
         }
 //        check username
         checkIfUsernameExist(signUpRequest.getUsername());
@@ -50,8 +49,8 @@ public class UserServiceImpl implements UserService {
     private void checkIfUsernameExist(String username){
         User user = userRepository.getUserByUsername(username);
 
-        if(user == null){
-            throw new UsernameAlreadyExistException("Username already exist");
+        if(user != null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username already exist");
         }
 
     }
