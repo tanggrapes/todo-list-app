@@ -4,6 +4,7 @@ import com.marktoledo.todolistapi.domain.User;
 import com.marktoledo.todolistapi.dto.request.SignUpRequest;
 import com.marktoledo.todolistapi.dto.response.AuthenticationResponse;
 import com.marktoledo.todolistapi.dto.response.SignUpResponse;
+import com.marktoledo.todolistapi.exception.PasswordDidNotMatchException;
 import com.marktoledo.todolistapi.exception.UsernameAlreadyExistException;
 import com.marktoledo.todolistapi.repository.UserRepository;
 import com.marktoledo.todolistapi.service.UserService;
@@ -24,6 +25,11 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
+
+//      validate if password match
+        if(!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())){
+            throw new PasswordDidNotMatchException("Password did not match");
+        }
 //        check username
         checkIfUsernameExist(signUpRequest.getUsername());
         User user = User.builder()
