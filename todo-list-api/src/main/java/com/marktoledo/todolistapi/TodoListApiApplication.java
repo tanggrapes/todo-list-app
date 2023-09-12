@@ -9,10 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class TodoListApiApplication {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(TodoListApiApplication.class, args);
