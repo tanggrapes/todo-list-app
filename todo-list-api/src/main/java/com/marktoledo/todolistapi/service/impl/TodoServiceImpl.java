@@ -4,12 +4,14 @@ import com.marktoledo.todolistapi.domain.Todo;
 import com.marktoledo.todolistapi.domain.User;
 import com.marktoledo.todolistapi.dto.request.CreateTodoRequest;
 import com.marktoledo.todolistapi.dto.response.CreateTodoResponse;
+import com.marktoledo.todolistapi.dto.response.TodoListResponse;
 import com.marktoledo.todolistapi.repository.TodoRepository;
 import com.marktoledo.todolistapi.repository.UserRepository;
 import com.marktoledo.todolistapi.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -17,8 +19,9 @@ public class TodoServiceImpl implements TodoService {
 
     private UserRepository userRepository;
     private TodoRepository todoRepository;
+
     @Autowired
-    public TodoServiceImpl(UserRepository userRepository, TodoRepository todoRepository){
+    public TodoServiceImpl(UserRepository userRepository, TodoRepository todoRepository) {
         this.userRepository = userRepository;
         this.todoRepository = todoRepository;
     }
@@ -41,4 +44,18 @@ public class TodoServiceImpl implements TodoService {
                 .description(todo.getDescription())
                 .build();
     }
+
+    @Override
+    public List<TodoListResponse> getTodoList(UUID userId) {
+        User user = userRepository.getReferenceById(userId);
+        return user.getTodos().stream()
+                .map(todo -> TodoListResponse.builder()
+                        .isCompleted(todo.getIsCompleted())
+                        .title(todo.getTitle())
+                        .description(todo.getDescription())
+                        .dueDate(todo.getDueDate())
+                        .id(todo.getId()).build()
+                ).toList();
+    }
+
 }
