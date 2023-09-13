@@ -1,6 +1,8 @@
 package com.marktoledo.todolistapi.controller;
 
+import com.marktoledo.todolistapi.dto.request.SignInRequest;
 import com.marktoledo.todolistapi.dto.request.SignUpRequest;
+import com.marktoledo.todolistapi.dto.response.AuthenticationResponse;
 import com.marktoledo.todolistapi.dto.response.SignUpResponse;
 import com.marktoledo.todolistapi.service.UserService;
 import jakarta.validation.Valid;
@@ -9,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -30,4 +29,10 @@ public class UserController {
     public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignUpRequest request){
         return new ResponseEntity<>(this.userService.signUp(request), HttpStatus.CREATED);
     }
+
+    @PostMapping(path = "/sign-in",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AuthenticationResponse> signIn(@Valid @RequestBody SignInRequest request){
+        return new ResponseEntity<>(this.userService.signIn(request), HttpStatus.OK);
+    }
+
 }
