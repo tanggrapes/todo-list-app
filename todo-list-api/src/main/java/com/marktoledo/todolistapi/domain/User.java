@@ -3,11 +3,14 @@ package com.marktoledo.todolistapi.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 
 @Entity
@@ -32,4 +35,7 @@ public class User extends BaseEntity {
 
     @Column
     private String roles;
+
+    @OneToMany(mappedBy="user")
+    private List<Todo> todos;
 }
