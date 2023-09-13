@@ -34,6 +34,7 @@ public class TodoServiceImpl implements TodoService {
                 .user(user)
                 .build();
         return CreateTodoResponse.builder()
+                .id(todo.getId())
                 .isCompleted(todo.getIsCompleted())
                 .dueDate(todo.getDueDate())
                 .title(todo.getTitle())
