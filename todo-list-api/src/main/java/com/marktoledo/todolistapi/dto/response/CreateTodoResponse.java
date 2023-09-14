@@ -1,19 +1,14 @@
 package com.marktoledo.todolistapi.dto.response;
 
+import com.marktoledo.todolistapi.dto.BaseDateDto;
 import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class CreateTodoResponse {
+@Getter
+public class CreateTodoResponse extends BaseDateDto {
 
     private UUID id;
 
@@ -24,4 +19,14 @@ public class CreateTodoResponse {
     private Date dueDate;
 
     private Boolean isCompleted;
+
+    @Builder
+    public CreateTodoResponse(Date createdAt, Date updatedAt, UUID id, String title, String description, Date dueDate, Boolean isCompleted) {
+        super(createdAt, updatedAt);
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.isCompleted = isCompleted;
+    }
 }

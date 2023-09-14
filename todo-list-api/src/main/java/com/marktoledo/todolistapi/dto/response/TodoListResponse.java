@@ -1,18 +1,13 @@
 package com.marktoledo.todolistapi.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.marktoledo.todolistapi.dto.BaseDateDto;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class TodoListResponse {
+@Getter
+public class TodoListResponse extends BaseDateDto {
 
     private UUID id;
 
@@ -23,4 +18,14 @@ public class TodoListResponse {
     private Date dueDate;
 
     private Boolean isCompleted;
+
+    @Builder
+    public TodoListResponse(Date createdAt, Date updatedAt, UUID id, String title, String description, Date dueDate, Boolean isCompleted) {
+        super(createdAt, updatedAt);
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.isCompleted = isCompleted;
+    }
 }
