@@ -26,6 +26,7 @@ public class Todo extends BaseEntity{
     private Date dueDate;
 
     @Column()
+    @Builder.Default
     private Boolean isCompleted = false;
 
     @ManyToOne
