@@ -19,9 +19,10 @@ public abstract class BaseEntity {
     @Column(columnDefinition = "BINARY(16)", updatable = false, nullable = false)
     private UUID id;
 
-    private String createdBy;
+//      remove these two field since user who own the todo can only update
+//    private String createdBy;
 
-    private String updatedBy;
+//    private String updatedBy;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
