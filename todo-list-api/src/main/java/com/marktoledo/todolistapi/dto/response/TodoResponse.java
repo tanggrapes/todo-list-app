@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Getter
-public class TodoListResponse extends BaseDateDto {
+public class TodoResponse extends BaseDateDto {
 
     private UUID id;
 
@@ -20,7 +20,7 @@ public class TodoListResponse extends BaseDateDto {
     private Boolean isCompleted;
 
     @Builder
-    public TodoListResponse(Date createdAt, Date updatedAt, UUID id, String title, String description, Date dueDate, Boolean isCompleted) {
+    public TodoResponse(Date createdAt, Date updatedAt, UUID id, String title, String description, Date dueDate, Boolean isCompleted) {
         super(createdAt, updatedAt);
         this.id = id;
         this.title = title;
