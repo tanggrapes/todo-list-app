@@ -5,7 +5,7 @@ import com.marktoledo.todolistapi.domain.User;
 import com.marktoledo.todolistapi.dto.request.CreateTodoRequest;
 import com.marktoledo.todolistapi.dto.request.UpdateTodoRequest;
 import com.marktoledo.todolistapi.dto.response.CreateTodoResponse;
-import com.marktoledo.todolistapi.dto.response.TodoListResponse;
+import com.marktoledo.todolistapi.dto.response.TodoResponse;
 import com.marktoledo.todolistapi.dto.response.UpdateTodoResponse;
 import com.marktoledo.todolistapi.repository.TodoRepository;
 import com.marktoledo.todolistapi.repository.UserRepository;
@@ -53,10 +53,10 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<TodoListResponse> getTodoList(UUID userId) {
+    public List<TodoResponse> getTodoList(UUID userId) {
         User user = userRepository.findById(userId).get();
         return user.getTodos().stream()
-                .map(todo -> TodoListResponse.builder()
+                .map(todo -> TodoResponse.builder()
                         .id(todo.getId())
                         .isCompleted(todo.getIsCompleted())
                         .dueDate(todo.getDueDate())
@@ -69,9 +69,9 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public UpdateTodoResponse updateTodo(UUID todoId, UpdateTodoRequest request) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not exist"));
+    public UpdateTodoResponse updateTodo(UUID id, UpdateTodoRequest request) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not exist"));
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
         todo.setDueDate(request.getDueDate());
@@ -88,8 +88,23 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteTodo(UUID todoId) {
-        todoRepository.deleteById(todoId);
+    public void deleteTodo(UUID id) {
+        todoRepository.deleteById(id);
+    }
+
+    @Override
+    public TodoResponse getTodo(UUID id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not exist"));
+        return TodoResponse.builder()
+                .id(todo.getId())
+                .isCompleted(todo.getIsCompleted())
+                .dueDate(todo.getDueDate())
+                .title(todo.getTitle())
+                .description(todo.getDescription())
+                .createdAt(todo.getCreatedAt())
+                .updatedAt(todo.getUpdatedAt())
+                .build();
     }
 
 
