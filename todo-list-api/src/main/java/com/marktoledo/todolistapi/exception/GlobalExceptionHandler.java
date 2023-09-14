@@ -30,8 +30,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public void constraintViolationException(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value());
+    public ResponseEntity<Map<String, List<String>>> constraintViolationException(ConstraintViolationException ex) throws IOException {
+//        handle invalid uuid
+        Map<String, List<String>> map = new HashMap<>();
+        map.put("errors", Arrays.asList(ex.getMessage()));
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+
     }
 
     //    Default for all RuntimeException
