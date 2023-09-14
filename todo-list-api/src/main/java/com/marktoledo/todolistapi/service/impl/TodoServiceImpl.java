@@ -41,6 +41,7 @@ public class TodoServiceImpl implements TodoService {
                 .description(request.getDescription())
                 .user(user)
                 .build();
+        todoRepository.save(todo);
         return CreateTodoResponse.builder()
                 .id(todo.getId())
                 .isCompleted(todo.getIsCompleted())
