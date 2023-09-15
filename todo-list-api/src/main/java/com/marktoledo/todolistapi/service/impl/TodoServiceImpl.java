@@ -68,11 +68,16 @@ public class TodoServiceImpl implements TodoService {
                         .build()
                 ).toList();
     }
-
+//  limitation and scope of this update is need include all properties in payload even if not updated
+//    if its null it will update to null except to required
     @Override
-    public UpdateTodoResponse updateTodo(UUID id, UpdateTodoRequest request) {
+    public UpdateTodoResponse updateTodo(UUID userId, UUID id, UpdateTodoRequest request) {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not exist"));
+
+        if(!userId.toString().equals(todo.getUser().getId().toString())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "you can't update todo of other user");
+        }
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
         todo.setDueDate(request.getDueDate());

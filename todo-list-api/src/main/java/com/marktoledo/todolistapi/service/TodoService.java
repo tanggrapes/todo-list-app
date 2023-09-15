@@ -15,7 +15,7 @@ public interface TodoService {
 
     List<TodoResponse> getTodoList(UUID userId);
 
-    UpdateTodoResponse updateTodo(UUID id, UpdateTodoRequest request);
+    UpdateTodoResponse updateTodo(UUID userId, UUID id, UpdateTodoRequest request);
 
     void deleteTodo(UUID id);
 
