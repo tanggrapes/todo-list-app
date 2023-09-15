@@ -98,9 +98,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteTodo(UUID id) {
-        todoRepository.deleteById(id);
+    public void deleteTodo(UUID userId, UUID id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessageUtil.TODO_NOT_FOUND));
+        validateUser(todo,userId);
+        todoRepository.delete(todo);
     }
+
 
     @Override
     public TodoResponse getTodo(UUID userId, UUID id) {
@@ -108,10 +112,8 @@ public class TodoServiceImpl implements TodoService {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessageUtil.TODO_NOT_FOUND));
 
+        validateUser(todo,userId);
 
-        if (!todo.getUser().getId().toString().equals(userId.toString())) {
-            new ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessageUtil.UNAUTHORIZED_ACCESS);
-        }
         return TodoResponse.builder()
                 .id(todo.getId())
                 .isCompleted(todo.getIsCompleted())
@@ -121,6 +123,12 @@ public class TodoServiceImpl implements TodoService {
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())
                 .build();
+    }
+
+    private void validateUser(Todo todo, UUID userId){
+        if (!todo.getUser().getId().toString().equals(userId.toString())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessageUtil.UNAUTHORIZED_ACCESS);
+        }
     }
 
 

@@ -56,4 +56,12 @@ public class TodoController {
     public ResponseEntity<List<TodoResponse>> getTodoList(@RequestHeader(name = "Authorization") String token) {
         return new ResponseEntity<>(todoService.getTodoList(jwtTokenService.getUserIdInToken(token)), HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteTodo(@RequestHeader(name = "Authorization") String token,
+                                                @PathVariable(value = "id") @ValidUUID String id) {
+        todoService.deleteTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id));
+        return ResponseEntity.noContent().build();
+    }
+
 }
