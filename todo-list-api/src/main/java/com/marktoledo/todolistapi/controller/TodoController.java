@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -35,19 +36,24 @@ public class TodoController {
     @PostMapping
     public ResponseEntity<CreateTodoResponse> createTodo(@Valid @RequestBody CreateTodoRequest request,
                                                          @RequestHeader(name = "Authorization") String token) {
-        return new ResponseEntity<>(this.todoService.createTodo(request, jwtTokenService.getUserIdInToken(token)), HttpStatus.CREATED);
+        return new ResponseEntity<>(todoService.createTodo(request, jwtTokenService.getUserIdInToken(token)), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UpdateTodoResponse> updateTodo(@RequestBody UpdateTodoRequest request,
                                                          @RequestHeader(name = "Authorization") String token, @PathVariable(value = "id") @ValidUUID String id) {
-        return new ResponseEntity<>(this.todoService.updateTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id), request), HttpStatus.OK);
+        return new ResponseEntity<>(todoService.updateTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id), request), HttpStatus.OK);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<TodoResponse> getTodo(@RequestHeader(name = "Authorization") String token,
                                                 @PathVariable(value = "id") @ValidUUID String id) {
-        return new ResponseEntity<>(this.todoService.getTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id)), HttpStatus.OK);
+        return new ResponseEntity<>(todoService.getTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id)), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TodoResponse>> getTodoList(@RequestHeader(name = "Authorization") String token) {
+        return new ResponseEntity<>(todoService.getTodoList(jwtTokenService.getUserIdInToken(token)), HttpStatus.OK);
     }
 }
