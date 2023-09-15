@@ -8,6 +8,7 @@ import com.marktoledo.todolistapi.dto.response.SignUpResponse;
 import com.marktoledo.todolistapi.repository.UserRepository;
 import com.marktoledo.todolistapi.service.JwtTokenService;
 import com.marktoledo.todolistapi.service.UserService;
+import com.marktoledo.todolistapi.util.ErrorMessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
 //      validate if password match
         if (!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password did not match");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessageUtil.PASSWORD_NOT_MATCH);
         }
 //        check username
         checkIfUsernameExist(signUpRequest.getUsername());
@@ -68,14 +69,14 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.getUserByUsername(signInRequest.getUsername());
             return AuthenticationResponse.builder().token(jwtTokenService.createToken(user)).build();
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Credentials");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessageUtil.INVALID_CREDENTIALS);
     }
 
     private void checkIfUsernameExist(String username) {
         User user = userRepository.getUserByUsername(username);
 
         if (user != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessageUtil.USERNAME_ALREADY_EXIST);
         }
 
     }

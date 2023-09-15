@@ -10,6 +10,7 @@ import com.marktoledo.todolistapi.dto.response.UpdateTodoResponse;
 import com.marktoledo.todolistapi.repository.TodoRepository;
 import com.marktoledo.todolistapi.repository.UserRepository;
 import com.marktoledo.todolistapi.service.TodoService;
+import com.marktoledo.todolistapi.util.ErrorMessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,9 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public CreateTodoResponse createTodo(CreateTodoRequest request, UUID userId) {
-
-        User user = userRepository.findById(userId).get();
+//      token is valid but user not exist
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessageUtil.INVALID_USER));
         Todo todo = Todo.builder()
                 .dueDate(request.getDueDate())
                 .title(request.getTitle())
@@ -55,7 +57,8 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public List<TodoResponse> getTodoList(UUID userId) {
-        User user = userRepository.findById(userId).get();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessageUtil.INVALID_USER));
         return user.getTodos().stream()
                 .map(todo -> TodoResponse.builder()
                         .id(todo.getId())
@@ -68,15 +71,16 @@ public class TodoServiceImpl implements TodoService {
                         .build()
                 ).toList();
     }
-//  limitation and scope of this update is need include all properties in payload even if not updated
+
+    //  limitation and scope of this update is need include all properties in payload even if not updated
 //    if its null it will update to null except to required
     @Override
     public UpdateTodoResponse updateTodo(UUID userId, UUID id, UpdateTodoRequest request) {
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not exist"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessageUtil.TODO_NOT_FOUND));
 
-        if(!userId.toString().equals(todo.getUser().getId().toString())){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "you can't update todo of other user");
+        if (!userId.toString().equals(todo.getUser().getId().toString())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessageUtil.UNAUTHORIZED_ACCESS);
         }
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
