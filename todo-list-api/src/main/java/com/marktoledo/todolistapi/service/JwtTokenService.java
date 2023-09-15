@@ -14,28 +14,34 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
 public class JwtTokenService {
-
+    private final String TOKEN_PREFIX = "Bearer";
     private final int EXPIRATION_MILLIS = 1000 * 60 * 30;
     @Value("${jwt.secret}")
     private String SECRET;
 
-    public String createToken(User user){
+    public String createToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
+
         return Jwts.builder()
                 .setClaims(claims)
+                .setId(user.getId().toString())
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MILLIS))
                 .signWith(getKey(), SignatureAlgorithm.HS256).compact();
     }
 
-    public String getUsernameInToken(String token){
-        return getClaim(token, Claims::getSubject);
+    public String getUsernameInToken(String token) {
+        return getClaim(removePrefixInToken(token), Claims::getSubject);
+    }
+
+    public UUID getUserIdInToken(String token) {
+        return UUID.fromString(getClaim(removePrefixInToken(token), Claims::getId));
     }
 
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
@@ -66,12 +72,14 @@ public class JwtTokenService {
                 .getBody();
     }
 
-    private Key getKey() {
-        byte[] keyBytes= Decoders.BASE64.decode(SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private String removePrefixInToken(String token){
+        return token.replace(TOKEN_PREFIX,"").trim();
     }
 
-
+    private Key getKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
 
 }
