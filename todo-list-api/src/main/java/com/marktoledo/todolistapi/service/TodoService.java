@@ -19,7 +19,7 @@ public interface TodoService {
 
     void deleteTodo(UUID id);
 
-    TodoResponse getTodo(UUID id);
+    TodoResponse getTodo(UUID userId, UUID id);
 
 
 

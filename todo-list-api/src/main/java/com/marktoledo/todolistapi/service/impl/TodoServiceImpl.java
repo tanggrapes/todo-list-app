@@ -103,9 +103,15 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public TodoResponse getTodo(UUID id) {
+    public TodoResponse getTodo(UUID userId, UUID id) {
+
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not exist"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessageUtil.TODO_NOT_FOUND));
+
+
+        if (!todo.getUser().getId().toString().equals(userId.toString())) {
+            new ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessageUtil.UNAUTHORIZED_ACCESS);
+        }
         return TodoResponse.builder()
                 .id(todo.getId())
                 .isCompleted(todo.getIsCompleted())

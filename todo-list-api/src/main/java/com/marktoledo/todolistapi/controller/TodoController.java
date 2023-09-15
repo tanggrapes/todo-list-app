@@ -4,6 +4,7 @@ import com.marktoledo.todolistapi.annotation.ValidUUID;
 import com.marktoledo.todolistapi.dto.request.CreateTodoRequest;
 import com.marktoledo.todolistapi.dto.request.UpdateTodoRequest;
 import com.marktoledo.todolistapi.dto.response.CreateTodoResponse;
+import com.marktoledo.todolistapi.dto.response.TodoResponse;
 import com.marktoledo.todolistapi.dto.response.UpdateTodoResponse;
 import com.marktoledo.todolistapi.service.JwtTokenService;
 import com.marktoledo.todolistapi.service.TodoService;
@@ -41,5 +42,12 @@ public class TodoController {
     public ResponseEntity<UpdateTodoResponse> updateTodo(@RequestBody UpdateTodoRequest request,
                                                          @RequestHeader(name = "Authorization") String token, @PathVariable(value = "id") @ValidUUID String id) {
         return new ResponseEntity<>(this.todoService.updateTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id), request), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TodoResponse> getTodo(@RequestHeader(name = "Authorization") String token,
+                                                @PathVariable(value = "id") @ValidUUID String id) {
+        return new ResponseEntity<>(this.todoService.getTodo(jwtTokenService.getUserIdInToken(token), UUID.fromString(id)), HttpStatus.OK);
     }
 }
